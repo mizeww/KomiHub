@@ -1,0 +1,18 @@
+nav {
+    font-family: 'Arial', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+/* Стили именно для ссылок внутри nav */
+nav a {
+    text-decoration: none;
+    color: #00FFFF; /* Лучше задать конкретный цвет, чтобы не зависеть от родителя */
+    transition: 0.3s; /* Добавит плавности при наведении */
+}
+
+/* Эффект при наведении на ссылку */
+nav a:hover {
+    text-decoration: underline;
+    color: #ff4500;
+}
