@@ -93,11 +93,15 @@ def user():
     return render_template("user.html")
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect("/")
+
+@app.route('/translate')
+def translate():
+    ...
 
 
 if __name__ == '__main__':
