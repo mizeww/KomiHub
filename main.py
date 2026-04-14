@@ -85,6 +85,14 @@ def index():
     news = db_sess.query(News).filter(News.is_private != True)
     return render_template("index.html", news=news)
 
+
+@app.route("/user")
+def user():
+    # db_sess = db_session.create_session()
+    # news = db_sess.query(News).filter(News.is_private != True)
+    return render_template("user.html")
+
+
 @app.route('/logout')
 @login_required
 def logout():

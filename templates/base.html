@@ -10,7 +10,8 @@
 <body class="bg-dark text-light">
   <nav>
     {% if current_user.is_authenticated %}
-    <a href="/logout">{{ current_user.name }}</a>
+      <a href="/user">{{ current_user.name }}</a>
+        <a href="/logout">ВЫЙТИ</a>
     <a href="/">ГЛАВНАЯ</a>
     {% else %}
     <p>
