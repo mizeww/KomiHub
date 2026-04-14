@@ -85,12 +85,15 @@ def index():
     news = db_sess.query(News).filter(News.is_private != True)
     return render_template("index.html", news=news)
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect("/")
 
+@app.route('/translate')
+def translate():
+    ...
 
 if __name__ == '__main__':
     db_session.global_init('db/blogs.db')
