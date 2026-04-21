@@ -1,6 +1,5 @@
 import unittest
 from . import users
-from . import news
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):

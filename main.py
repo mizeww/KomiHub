@@ -1,7 +1,7 @@
 from flask import Flask, url_for, render_template, redirect, request, make_response, session
 from data import db_session
 from data.users import User
-from data.news import News
+from data.words import Word
 from forms.register_form import RegisterForm
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -82,8 +82,7 @@ def login():
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("index.html", news=news)
+    return render_template("index.html")
 
 
 @app.route("/user")
