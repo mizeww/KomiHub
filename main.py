@@ -1,7 +1,10 @@
 from flask import Flask, url_for, render_template, redirect, request, make_response, session
+
 from data import db_session
 from data.users import User
 from data.words import Word
+
+from forms.translate_form import TranslateForm
 from forms.register_form import RegisterForm
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -15,13 +18,15 @@ app.config["SECRET_KEY"] = '6752691488291642133722832211molodoyadept6666767'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    return db_sess.get(User,user_id)
+    return db_sess.get(User, user_id)
+
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -41,7 +46,11 @@ def reqister():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html',
+                           title='Регистрация',
+                           form=form,
+                           TranslateForm=TranslateForm())
+
 
 @app.route("/cookie_test")
 def cookie_test():
@@ -58,12 +67,14 @@ def cookie_test():
                        max_age=60 * 60 * 24 * 365 * 2)
     return res
 
+
 @app.route("/session_test")
 def session_test():
     visits_count = session.get('visits_count', 0)
     session['visits_count'] = visits_count + 1
     return make_response(
         f"Вы пришли на эту страницу {visits_count + 1} раз")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -76,20 +87,21 @@ def login():
             return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+                               form=form, TranslateForm=TranslateForm())
+    return render_template('login.html', title='Авторизация', form=form, TranslateForm=TranslateForm())
+
 
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    return render_template("index.html")
+    return render_template("index.html", TranslateForm=TranslateForm())
 
 
 @app.route("/user")
 def user():
     # db_sess = db_session.create_session()
     # news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("user.html")
+    return render_template("user.html", TranslateForm=TranslateForm())
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -97,6 +109,7 @@ def user():
 def logout():
     logout_user()
     return redirect("/")
+
 
 @app.route('/translate')
 def translate():
