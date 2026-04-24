@@ -9,7 +9,7 @@ from data.words import Word
 Записывает перевод в базу данных для дальнейшего использования
 """
 
-db_session.global_init('db/blogs.db')
+db_session.global_init('../db/blogs.db')
 url = 'http://dict.komikyv.ru/poisk?name=%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%BE-%D0%BA%D0%BE%D0%BC%D0%B8'
 response = requests.get(url)
 

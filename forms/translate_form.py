@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, TextAreaField, SubmitField, EmailField, BooleanField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
-class LoginForm(FlaskForm):
-    text = TextAreaField('Введите текст')
-    submit = SubmitField('Отправить')
+class TranslateForm(FlaskForm):
+    # Поле для ввода слова
+    word = StringField('Слово', validators=[DataRequired()], render_kw={"placeholder": "Введите слово..."})
+    submit = SubmitField('Перевести')

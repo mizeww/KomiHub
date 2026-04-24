@@ -9,19 +9,48 @@
     <title>{{ title }}</title>
 </head>
 <body class="bg-dark text-light">
-  <nav>
-    {% if current_user.is_authenticated %}
-      <a href="/user">{{ current_user.name }}</a>
-        <a href="/logout">ВЫЙТИ</a>
-    <a href="/">ГЛАВНАЯ</a>
-    {% else %}
-    <p>
-        <a href="/">ГЛАВНАЯ</a>
-        <a href="/register">ЗАРЕГИСТРИРОВАТЬСЯ</a>
-        <a href="/login">ВОЙТИ</a>
-    </p>
-    {% endif %}
-  </nav>
+  <header class="main-header">
+    <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/trainers">Тренажеры</a>
+        <a href="/cards">Карточки</a>
+    </nav>
+
+    <form id="translateForm" class="search-container">
+        {{ TranslateForm.hidden_tag() }}
+        {{ TranslateForm.word(id="wordInput", class="search-input") }}
+        {{ TranslateForm.submit(class="search-button") }}
+    </form>
+
+    <div class="auth-block">
+        {% if current_user.is_authenticated %}
+            {% if request.endpoint == 'user' %}
+                <a href="/logout">Выйти</a>
+            {% else %}
+                <a href="/user">{{ current_user.name }}</a>
+            {% endif %}
+        {% else %}
+            {% if request.endpoint == 'login' %}
+                <a href="/register">Регистрация</a>
+            {% elif request.endpoint == 'register' %}
+                <a href="/login">Войти</a>
+            {% else %}
+                <a href="/login">Войти / Регистрация</a>
+            {% endif %}
+        {% endif %}
+    </div>
+  </header>
+
+  <script>
+    document.getElementById('translateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const word = document.getElementById('wordInput').value.trim();
+        if (word) {
+            // Формируем чистый URL: /translate/apple
+            window.location.href = '/translate/' + encodeURIComponent(word);
+        }
+    });
+  </script>
 
     <div class="container mt-5">
             {% block content %}
