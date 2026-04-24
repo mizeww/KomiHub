@@ -16,3 +16,27 @@ nav a:hover {
     text-decoration: underline;
     color: #ff4500;
 }
+
+.main-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: calc(100vh - 100px); /* Вычитаем примерную высоту nav, чтобы не было прокрутки */
+}
+
+.centered-box {
+  width: 50vw;
+  min-height: 20vh;
+  background-color: lightblue;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  color: black;
+
+    border-radius: 15px;
+  padding: 10px;
+  word-break: break-word;
+    flex-direction: column;
+    text-align: center;
+
+}
