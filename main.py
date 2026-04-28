@@ -6,8 +6,13 @@ from flask_login import LoginManager, login_user, login_required, logout_user
 from data import db_session
 from data.users import User
 from data.words import Word
+
+from forms.translate_form import TranslateForm
+import datetime
+from flask_login import LoginManager, login_user, login_required, logout_user
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
+import random
 
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
@@ -44,7 +49,10 @@ def reqister():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html',
+                           title='Регистрация',
+                           form=form,
+                           TranslateForm=TranslateForm())
 
 
 @app.route("/cookie_test")
@@ -82,14 +90,14 @@ def login():
             return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+                               form=form, TranslateForm=TranslateForm())
+    return render_template('login.html', title='Авторизация', form=form, TranslateForm=TranslateForm())
 
 
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    return render_template("index.html", title="Komi Lang")
+    return render_template("index.html", TranslateForm=TranslateForm())
 
 
 @app.route("/user")
@@ -97,7 +105,7 @@ def index():
 def user():
     # db_sess = db_session.create_session()
     # news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("user.html", title="Личный кабинет")
+    return render_template("user.html", TranslateForm=TranslateForm())
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -113,7 +121,7 @@ def logout():
 #     data = db_sess.query(Word).filter(value=word)
 #     data = data
 
-@app.route('/test/<word>')
+@app.route('/translate/<word>')
 def translate(word):
     db_sess = db_session.create_session()
     data = db_sess.query(Word).filter(Word.value == word).first()
@@ -127,7 +135,11 @@ def translate(word):
         if i not in '["]':
             res += i
 
-    return render_template("translate.html", word=word, translate=res, title="Komi Lang")
+    return render_template("translate.html",
+                           word=word,
+                           translate=res,
+                           title="Komi Lang",
+                           TranslateForm=TranslateForm())
 
 
 if __name__ == '__main__':
