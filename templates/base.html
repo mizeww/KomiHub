@@ -10,9 +10,14 @@
 <body class="bg-light text-dark">
   <header class="main-header">
     <nav class="nav-links">
-        <a href="/">Главная</a>
+        <a href="/">KömiHub</a>
         <a href="/trainers">Тренажеры</a>
         <a href="/cards">Карточки</a>
+        {% if current_user.id == 2 and request.endpoint == 'cards' %}
+            <div>|</div>
+           <a href="/cards/add_card">Добавить карту</a>
+           <a href="/cards/change_card">Изменить карту</a>
+        {% endif %}
     </nav>
 
     <form id="translateForm" class="search-container">

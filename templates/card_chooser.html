@@ -7,17 +7,11 @@
     <a href="{{ item.link }}" class="product-card">
         <header class="product-card__visual">
             <img src="{{ item.img }}" alt="{{ item.name }}" class="product-card__img">
-            {% if item.is_new %}
-                <span class="product-card__badge">Новинка</span>
-            {% endif %}
         </header>
 
         <main class="product-card__info">
             <h2 class="product-card__title">{{ item.name }}</h2>
             <p class="product-card__desc">{{ item.preview_text }}</p>
-            <div class="product-card__footer">
-                <span class="product-card__price">{{ item.price }} ₽</span>
-            </div>
         </main>
     </a>
     {% endfor %}

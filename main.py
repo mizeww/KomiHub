@@ -1,16 +1,18 @@
-import datetime
 from flask import Flask, render_template, redirect, request, make_response, session
 from data import db_session
 from data.users import User
 from data.words import Word
+from data.urls import Url
+from forms.add_card_form import AddCardForm
+from forms.change_card_form import ChangeCardForm
 from forms.translate_form import TranslateForm
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
+from generators.basic_classes import Card
 from generators.cards_test_generator import generate_card_test
 from generators.cards_most_used_nouns import first_100, second_100, third_100
-import random
 
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
@@ -97,15 +99,59 @@ def login():
                            TranslateForm=TranslateForm())
 
 
+@app.route('/cards/add_card', methods=['GET', 'POST'])
+def add_card():
+    form = AddCardForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+
+        url_card = Url(
+            name=form.name.data,
+            preview_text=form.preview.data,
+            link=form.url.data,
+            img=form.img.data,
+        )
+
+        db_sess.add(url_card)
+        db_sess.commit()
+        return redirect('/cards')
+    return render_template('add_card.html',
+                           title='Добавить карточку',
+                           form=form,
+                           TranslateForm=TranslateForm())
+
+@app.route('/cards/change_card', methods=['GET', 'POST'])
+def change_card():
+    form = ChangeCardForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+
+
+        db_sess.query(Url).filter(Url.name == form.name.data).update({'name': form.new_name.data,
+                                                                      'preview_text': form.preview.data,
+                                                                      'link': form.url.data,
+                                                                      'img': form.img.data})
+        db_sess.commit()
+        return redirect('/cards')
+    return render_template('change_card.html',
+                           title='Изменить карточку',
+                           form=form,
+                           TranslateForm=TranslateForm())
+
 @app.route("/")
 def index():
     return render_template("index.html",
-                           TranslateForm=TranslateForm())
+                           TranslateForm=TranslateForm(),
+                           title='Komi Hub')
 
 @app.route("/cards")
 def cards():
+    db_sess = db_session.create_session()
+
+    cards_chooser = db_sess.query(Url).order_by(Url.id).all()
     return render_template("card_chooser.html",
-                           TranslateForm=TranslateForm())
+                           TranslateForm=TranslateForm(),
+                           items=cards_chooser)
 
 @app.route("/cards/random100cards")
 def random_100_cards():
@@ -152,12 +198,9 @@ def translate(word):
     db_sess = db_session.create_session()
     data1 = db_sess.query(Word).filter(Word.value == word.lower()).first()
     data2 = db_sess.query(Word).filter(Word.translate.like(f'%{word.lower()}%')).first()
-    print('-' * 1000)
-    print(data1, word)
-    print(data2, word)
-    print('-' * 1000)
 
     res = ''
+
     if data1:
         strdata = data1.translate
         for i in strdata:
