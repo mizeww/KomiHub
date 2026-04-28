@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<!-- Контейнер для сетки -->
+<div class="card-grid">
+    {% for card in word_cards %}
+    <div class="card">
+        <img src="{{ card.image_url }}" alt="{{ card.title }}">
+        <div class="card-content">
+            <h3>{{ card.word_kom }}</h3>
+            <p>{{ card.word_rus }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -145,3 +145,120 @@
     text-align: center;
 
 }
+
+
+.card-grid {
+    display: grid;
+    /* Создает колонки: минимум 250px, максимум — распределение остатка */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px; /* Расстояние между карточками */
+    padding: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Чтобы фото не растягивалось */
+}
+
+.card-content {
+    padding: 15px;
+}
+
+/* Контейнер-сетка */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+    padding: 40px;
+    background-color: #f9f9f9;
+}
+
+/* Основной блок карточки */
+.product-card {
+    background: #ffffff;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #2d3436;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.3s ease;
+    border: 1px solid #edf2f7;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Элементы верхней части (фото) */
+.product-card__visual {
+    position: relative;
+    height: 220px;
+    border-radius: 15px 15px 0 0;
+    overflow: hidden;
+}
+
+.product-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #00b894;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Контентная часть */
+.product-card__info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card__title {
+    margin: 0 0 8px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.product-card__desc {
+    font-size: 0.9rem;
+    color: #636e72;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Футер карточки с ценой */
+.product-card__footer {
+    margin-top: auto;
+    border-top: 1px solid #f1f2f6;
+    padding-top: 15px;
+}
+
+.product-card__price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0984e3;
+}

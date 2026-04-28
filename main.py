@@ -1,17 +1,15 @@
 import datetime
-
 from flask import Flask, render_template, redirect, request, make_response, session
-from flask_login import LoginManager, login_user, login_required, logout_user
-
 from data import db_session
 from data.users import User
 from data.words import Word
-
 from forms.translate_form import TranslateForm
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
+from generators.cards_test_generator import generate_card_test
+from generators.cards_most_used_nouns import first_100, second_100, third_100
 import random
 
 app = Flask(__name__)
@@ -75,6 +73,7 @@ def cookie_test():
 def session_test():
     visits_count = session.get('visits_count', 0)
     session['visits_count'] = visits_count + 1
+
     return make_response(
         f"Вы пришли на эту страницу {visits_count + 1} раз")
 
@@ -88,16 +87,49 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
+
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form, TranslateForm=TranslateForm())
-    return render_template('login.html', title='Авторизация', form=form, TranslateForm=TranslateForm())
+
+    return render_template('login.html', title='Авторизация',
+                           form=form,
+                           TranslateForm=TranslateForm())
 
 
 @app.route("/")
 def index():
+    return render_template("index.html",
+                           TranslateForm=TranslateForm())
+
+@app.route("/cards")
+def cards():
+    return render_template("card_chooser.html",
+                           TranslateForm=TranslateForm())
+
+@app.route("/cards/random100cards")
+def random_100_cards():
+
     db_sess = db_session.create_session()
-    return render_template("index.html", TranslateForm=TranslateForm())
+    word_cards = generate_card_test(100, db_sess)
+
+    return render_template("cards.html",
+                           TranslateForm=TranslateForm(),
+                           word_cards=word_cards)
+
+@app.route("/cards/most_used_nouns/<value>")
+def most_used_nouns(value):
+
+    functions = {'first100': first_100,
+                 'second100': second_100,
+                 'third100': third_100}
+
+    db_sess = db_session.create_session()
+    word_cards = functions[value](db_sess)
+
+    return render_template("cards.html",
+                           TranslateForm=TranslateForm(),
+                           word_cards=word_cards)
 
 
 @app.route("/user")
@@ -115,25 +147,30 @@ def logout():
     return redirect("/")
 
 
-# @app.route('/translate')
-# def translate(word):
-#     db_sess = db_session.create_session()
-#     data = db_sess.query(Word).filter(value=word)
-#     data = data
-
 @app.route('/translate/<word>')
 def translate(word):
     db_sess = db_session.create_session()
-    data = db_sess.query(Word).filter(Word.value == word).first()
-    res = []
+    data1 = db_sess.query(Word).filter(Word.value == word.lower()).first()
+    data2 = db_sess.query(Word).filter(Word.translate.like(f'%{word.lower()}%')).first()
     print('-' * 1000)
-    print(data, word)
+    print(data1, word)
+    print(data2, word)
     print('-' * 1000)
-    strdata = data.translate
+
     res = ''
-    for i in strdata:
-        if i not in '["]':
-            res += i
+    if data1:
+        strdata = data1.translate
+        for i in strdata:
+            if i not in "['']":
+                res += i
+    elif data2:
+        strdata = data2.value
+        for i in strdata:
+            if i not in "['']":
+                res += i
+
+    if not res:
+        res = 'Слово не найдено'
 
     return render_template("translate.html",
                            word=word,
