@@ -1,0 +1,156 @@
+/* 1. Большой экран (Hero) */
+.hero-screen {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('/static/img/bg.jpg') no-repeat center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+/* Ваш старый шрифт для заголовка */
+.hero-title {
+    font-size: 80px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+}
+
+/* 2. Маленькая шапка (Фиксированная) */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    background: transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+
+/* Контейнер внутри шапки для смещения кнопок к центру */
+.header-container {
+    width: 100%;
+    max-width: 1400px; /* Ограничиваем максимальную ширину */
+    margin: 0 auto;    /* Центрируем контейнер */
+    padding: 0 40px;   /* Минимальный отступ от краев (вместо 270px) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: padding 0.4s ease; /* Плавное сужение */
+}
+
+
+.search-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 40px;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Ваш старый размер */
+    font-weight: bold;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+}
+
+.search-button {
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Ваш старый размер */
+    font-weight: bold;
+}
+
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Состояние при скролле */
+.main-header.scrolled {
+    background: rgba(248, 249, 250, 0.98); /* Почти белый непрозрачный */
+    height: 70px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* 3. НАВИГАЦИЯ (Ваш старый шрифт) */
+.nav-links {
+    display: flex;
+    gap: 30px;
+    font-family: 'Arial', sans-serif;
+    font-size: 25px; /* Ваш старый размер */
+    font-weight: bold;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white; /* Белые на фоне Hero */
+    transition: color 0.3s;
+}
+
+/* Изменение цвета ссылок при скролле */
+.main-header.scrolled .nav-links a,
+.main-header.scrolled .auth-block a {
+    color: #333;
+}
+
+.main-header.scrolled .nav-links a:hover {
+    color: #007bff;
+}
+
+/* 4. Блок авторизации */
+.auth-block {
+    font-family: 'Arial', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.auth-block a {
+    text-decoration: none;
+    color: white;
+}
+
+/* 5. Контент */
+.content {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 50px;
+}
+/* Адаптация для планшетов и телефонов (меньше 768px) */
+@media (max-width: 768px) {
+    /* Обнуляем огромные паддинги */
+    .header-container {
+        padding: 0 10px;
+        flex-direction: column; /* Включаем колонку */
+        gap: 10px;
+    }
+
+    .main-header {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    /* Когда скроллим на мобилке, убираем фиксированную высоту */
+    .main-header.scrolled {
+        height: auto;
+    }
+}

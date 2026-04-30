@@ -2,10 +2,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
     background-color: #f8f9fa; /* Светлый фон шапки */
     border-bottom: 1px solid #ddd;
     font-family: sans-serif;
+    height: 70px;
+    width: 100%;
+    max-width: 1400px; /* Ограничиваем максимальную ширину */
+    margin: 0 auto;    /* Центрируем контейнер */
+    padding: 0 40px;   /* Минимальный отступ от краев (вместо 270px) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: padding 0.4s ease; /* Плавное сужение */
 }
 
 /* Навигация */
@@ -34,6 +42,9 @@
     display: flex;
     justify-content: center;
     margin: 0 40px;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Ваш старый размер */
+    font-weight: bold;
 }
 
 .search-input {
@@ -43,6 +54,9 @@
     border: 1px solid #ccc;
     border-radius: 20px 0 0 20px;
     outline: none;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Ваш старый размер */
+    font-weight: bold;
 }
 
 .search-button {
@@ -53,6 +67,9 @@
     border-radius: 0 20px 20px 0;
     cursor: pointer;
     transition: background-color 0.2s;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Ваш старый размер */
+    font-weight: bold;
 }
 
 .search-button:hover {
@@ -62,8 +79,11 @@
 /* Правый блок (Вход/Профиль) */
 .auth-block {
     flex-shrink: 0;
-    width: 250px;      /* Фиксированная ширина */
+    width: 270px;      /* Фиксированная ширина */
     text-align: right; /* Текст прижат вправо */
+    font-family: 'Arial', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .auth-block a {
@@ -71,10 +91,16 @@
     color: #333;
     font-weight: 500;
     transition: opacity 0.2s;
+    font-family: 'Arial', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .auth-block a:hover {
     opacity: 0.7;
+    font-family: 'Arial', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 /* Адаптация для мобильных устройств (экраны меньше 768px) */

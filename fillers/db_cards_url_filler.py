@@ -22,11 +22,3 @@ url = Url(name=name, preview_text=preview_text, link=link, img=img)
 
 db_sess.add(url)
 db_sess.commit()
-
-
-'''
-вторые 100 самых используемых слов
-набор из 100 слов
-/cards/most_used_nouns/second100
-None
-'''
