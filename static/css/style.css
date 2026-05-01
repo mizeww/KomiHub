@@ -4,8 +4,46 @@
     justify-content: space-between;
     background-color: #f8f9fa; /* Светлый фон шапки */
     border-bottom: 1px solid #ddd;
-    font-family: sans-serif;
+    font-family: 'Arial', sans-serif;
     height: 70px;
+    width: 100%;
+    min-height: 70px;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('/static/img/bg.jpg') no-repeat center/cover;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+
+    /* ДОБАВЬТЕ ЭТИ СТРОКИ */
+    position: sticky;      /* Закрепляет шапку */
+    top: 0;               /* Прижимает к самому верху */
+    z-index: 1000;        /* Помещает шапку поверх остального контента */
+
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('/static/img/bg.jpg') no-repeat center/cover;
+    border-bottom: 1px solid #ddd;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Находим ваш основной блок контента и заставляем его расти */
+/* Если ваш основной контент внутри <main> или <div class="content"> */
+main, .content, .catalog-grid, .main-wrapper {
+    flex: 1 0 auto;
+}
+
+.header-container {
     width: 100%;
     max-width: 1400px; /* Ограничиваем максимальную ширину */
     margin: 0 auto;    /* Центрируем контейнер */
@@ -15,11 +53,10 @@
     align-items: center;
     transition: padding 0.4s ease; /* Плавное сужение */
 }
-
 /* Навигация */
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     flex-shrink: 0;
     font-family: 'Arial', sans-serif;
     font-size: 25px;
@@ -28,8 +65,8 @@
 
 .nav-links a {
     text-decoration: none;
-    color: #333;
-    transition: color 0.2s;
+    color: #FFFFFF;
+    transition: color 0.3s;
 }
 
 .nav-links a:hover {
@@ -88,7 +125,7 @@
 
 .auth-block a {
     text-decoration: none;
-    color: #333;
+    color: #FFFFFF;
     font-weight: 500;
     transition: opacity 0.2s;
     font-family: 'Arial', sans-serif;
@@ -101,6 +138,7 @@
     font-family: 'Arial', sans-serif;
     font-size: 25px;
     font-weight: bold;
+    color: #007bff;
 }
 
 /* Адаптация для мобильных устройств (экраны меньше 768px) */
