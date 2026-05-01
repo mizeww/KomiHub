@@ -14,10 +14,58 @@ from forms.register_form import RegisterForm
 from generators.basic_classes import Card
 from generators.cards_test_generator import generate_card_test
 from generators.cards_most_used_nouns import first_100, second_100, third_100
+from flask_login import current_user
+import os
+from werkzeug.utils import secure_filename
+from flask import jsonify
 
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 app.config["SECRET_KEY"] = '6752691488291642133722832211molodoyadept6666767'
+
+UPLOAD_FOLDER = 'static/avatars'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/upload_avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    if 'avatar' not in request.files:
+        return jsonify({'success': False, 'error': 'Нет файла'})
+
+    file = request.files['avatar']
+
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'Файл не выбран'})
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(f"user_{current_user.id}_{file.filename}")
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        file.save(filepath)
+
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        user.avatar = f'/static/avatars/{filename}'
+        db_sess.commit()
+
+        return jsonify({
+            'success': True,
+            'avatar_url': user.avatar,
+            'message': 'Изображение успешно загружено'
+        })
+
+    return jsonify({'success': False, 'error': 'Неверный формат файла'})
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -121,12 +169,12 @@ def add_card():
                            form=form,
                            TranslateForm=TranslateForm())
 
+
 @app.route('/cards/change_card', methods=['GET', 'POST'])
 def change_card():
     form = ChangeCardForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-
 
         db_sess.query(Url).filter(Url.name == form.name.data).update({'name': form.new_name.data,
                                                                       'preview_text': form.preview.data,
@@ -139,6 +187,7 @@ def change_card():
                            form=form,
                            TranslateForm=TranslateForm())
 
+
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
@@ -149,6 +198,7 @@ def index():
                            title='Komi Hub',
                            items=items)
 
+
 @app.route("/cards")
 def cards():
     db_sess = db_session.create_session()
@@ -158,9 +208,9 @@ def cards():
                            TranslateForm=TranslateForm(),
                            items=cards_chooser)
 
+
 @app.route("/cards/random100cards")
 def random_100_cards():
-
     db_sess = db_session.create_session()
     word_cards = generate_card_test(100, db_sess)
 
@@ -168,9 +218,9 @@ def random_100_cards():
                            TranslateForm=TranslateForm(),
                            word_cards=word_cards)
 
+
 @app.route("/cards/most_used_nouns/<value>")
 def most_used_nouns(value):
-
     functions = {'first100': first_100,
                  'second100': second_100,
                  'third100': third_100}
@@ -186,9 +236,9 @@ def most_used_nouns(value):
 @app.route("/user")
 @login_required
 def user():
-    # db_sess = db_session.create_session()
-    # news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("user.html", TranslateForm=TranslateForm())
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    return render_template("user.html", name=user.name, email=user.email, TranslateForm=TranslateForm())
 
 
 @app.route('/logout', methods=['GET', 'POST'])
