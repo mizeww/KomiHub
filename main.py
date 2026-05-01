@@ -3,6 +3,7 @@ from data import db_session
 from data.users import User
 from data.words import Word
 from data.urls import Url
+from data.urls_index import UrlIndex
 from forms.add_card_form import AddCardForm
 from forms.change_card_form import ChangeCardForm
 from forms.translate_form import TranslateForm
@@ -140,9 +141,13 @@ def change_card():
 
 @app.route("/")
 def index():
+    db_sess = db_session.create_session()
+
+    items = db_sess.query(UrlIndex).order_by(UrlIndex.id).all()
     return render_template("index.html",
                            TranslateForm=TranslateForm(),
-                           title='Komi Hub')
+                           title='Komi Hub',
+                           items=items)
 
 @app.route("/cards")
 def cards():
