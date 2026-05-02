@@ -1,7 +1,7 @@
 from random import sample
 from sqlalchemy.orm import Session
-from data.words import Word
-from generators.basic_classes import Card
+from app.models.words import Word
+from app.services.generators.basic_classes import Card
 
 N_WORDS = 10000 # Предположительное число слов
 

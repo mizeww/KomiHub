@@ -1,7 +1,5 @@
-import requests
-from bs4 import BeautifulSoup
-from data import db_session
-from data.urls_index import UrlIndex
+from app.models import db_session
+from app.models.urls_index import UrlIndex
 
 """
 Создает дб для для перехода по карточкам на главной странице
@@ -9,7 +7,7 @@ from data.urls_index import UrlIndex
 Записывает в базу данных для дальнейшего использования
 """
 
-db_session.global_init('../db/blogs.db')
+db_session.global_init('../../../instance/blogs.db')
 
 db_sess = db_session.create_session()
 

@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from data import db_session
-from data.nouns import Noun
+from app.models import db_session
+from app.models.adjective import Adjective
 
 """
 Создает словарь для карточек самых используемых существительных
@@ -9,8 +9,8 @@ from data.nouns import Noun
 Записывает перевод в базу данных для дальнейшего использования
 """
 
-db_session.global_init('../db/blogs.db')
-url = 'http://komikyv.ru/node/341'
+db_session.global_init('../../../instance/blogs.db')
+url = 'http://komikyv.ru/node/345'
 response = requests.get(url)
 
 # Проверка успешности запроса
@@ -28,14 +28,9 @@ if response.status_code == 200:
             words = line.find_all('li')
             for word in words:
                 value, translate = word.get_text().strip().split(' – ')
-                noun = Noun(value=value, translate=translate)
+                adj = Adjective(value=value, translate=translate)
 
-                db_sess.add(noun)
+                db_sess.add(adj)
 
 
         db_sess.commit()
-
-
-
-
-

@@ -1,19 +1,18 @@
 from flask import Flask, render_template, redirect, request, make_response, session
-from data import db_session
-from data.users import User
-from data.words import Word
-from data.urls import Url
-from data.urls_index import UrlIndex
-from forms.add_card_form import AddCardForm
-from forms.change_card_form import ChangeCardForm
-from forms.translate_form import TranslateForm
+from app.models import db_session
+from app.models.users import User
+from app.models.words import Word
+from app.models.urls import Url
+from app.models.urls_index import UrlIndex
+from app.forms.add_card_form import AddCardForm
+from app.forms.change_card_form import ChangeCardForm
+from app.forms.translate_form import TranslateForm
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user
-from forms.login_form import LoginForm
-from forms.register_form import RegisterForm
-from generators.basic_classes import Card
-from generators.cards_test_generator import generate_card_test
-from generators.cards_most_used_nouns import first_100, second_100, third_100
+from app.forms.auth.login_form import LoginForm
+from app.forms.auth.register_form import RegisterForm
+from app.services.generators.cards_test_generator import generate_card_test
+from app.services.generators.cards_most_used import first_100_nouns, second_100_nouns, third_100_nouns, second_100_adj, first_100_adj
 from flask_login import current_user
 import os
 from werkzeug.utils import secure_filename
@@ -221,9 +220,22 @@ def random_100_cards():
 
 @app.route("/cards/most_used_nouns/<value>")
 def most_used_nouns(value):
-    functions = {'first100': first_100,
-                 'second100': second_100,
-                 'third100': third_100}
+    functions = {'first100': first_100_nouns,
+                 'second100': second_100_nouns,
+                 'third100': third_100_nouns}
+
+    db_sess = db_session.create_session()
+    word_cards = functions[value](db_sess)
+
+    return render_template("cards.html",
+                           TranslateForm=TranslateForm(),
+                           word_cards=word_cards)
+
+@app.route("/cards/most_used_adjectives/<value>")
+def most_used_adjectives(value):
+
+    functions = {'first100': first_100_adj,
+                 'second100': second_100_adj}
 
     db_sess = db_session.create_session()
     word_cards = functions[value](db_sess)
@@ -278,5 +290,5 @@ def translate(word):
 
 
 if __name__ == '__main__':
-    db_session.global_init('db/blogs.db')
+    db_session.global_init('instance/blogs.db')
     app.run(host="127.0.0.1", port=8081, debug=True)
