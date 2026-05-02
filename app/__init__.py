@@ -4,8 +4,9 @@ from app.extensions import db, login_manager, csrf
 from .models import db_session
 from .models.users import User
 
+
 def create_app(config_class=DevelopmentConfig):
-    app = Flask(__name__,  template_folder='templates', static_folder='static')
+    app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config.from_object(config_class)
 
     # Инициализация расширений
@@ -28,7 +29,7 @@ def create_app(config_class=DevelopmentConfig):
     from app.blueprints.cards import cards_bp
     from app.blueprints.cookie import cookie_bp
     from app.blueprints.translate import translate_bp
-    #from app.blueprints.lessons import lessons_bp
+    # from app.blueprints.lessons import lessons_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -36,7 +37,7 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(cards_bp, url_prefix='/cards')
     app.register_blueprint(cookie_bp, url_prefix='/cookies')
     app.register_blueprint(translate_bp)
-    #app.register_blueprint(lessons_bp, url_prefix='/lessons')
+    # app.register_blueprint(lessons_bp, url_prefix='/lessons')
 
     # Создание папки instance, если её нет
     with app.app_context():
