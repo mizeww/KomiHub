@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask
 from app.config import DevelopmentConfig
 from app.extensions import db, login_manager, csrf
@@ -38,6 +40,15 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(cookie_bp, url_prefix='/cookies')
     app.register_blueprint(translate_bp)
     # app.register_blueprint(lessons_bp, url_prefix='/lessons')
+
+    @app.context_processor
+    def inject_common_variables():
+        from app.forms.translate_form import TranslateForm
+
+        return {'TranslateForm': TranslateForm(),
+                'current_year': datetime.now().year,
+                'debug': app.debug}
+
 
     # Создание папки instance, если её нет
     with app.app_context():

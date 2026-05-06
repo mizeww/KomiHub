@@ -53,4 +53,4 @@ def upload_avatar():
 def user():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
-    return render_template("user.html", name=user.name, email=user.email, TranslateForm=TranslateForm())
+    return render_template("user.html", name=user.name, email=user.email)

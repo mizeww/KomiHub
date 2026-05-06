@@ -13,6 +13,5 @@ def index():
     items = db_sess.query(UrlIndex).order_by(UrlIndex.id).all()
 
     return render_template("index.html",
-                           TranslateForm=TranslateForm(),
                            title='Komi Hub',
                            items=items)

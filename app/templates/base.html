@@ -19,7 +19,7 @@
             <a href="/">KömiHub</a>
             <a href="/trainers">Тренажеры</a>
             <a href="/cards">Карточки</a>
-            {% if (current_user.id == 2 or current_user.id == 3) and request.endpoint == 'cards' %}
+            {% if (current_user.id == 2 or current_user.id == 3) and request.endpoint == 'cards.cards' %}
                 <div>|</div>
                <a href="/cards/add_card">Добавить карту</a>
                <a href="/cards/change_card">Изменить карту</a>
@@ -34,15 +34,15 @@
 
         <div class="auth-block">
             {% if current_user.is_authenticated %}
-                {% if request.endpoint == 'user' %}
+                {% if request.endpoint == 'profile.user' %}
                     <a href="/logout">Выйти</a>
                 {% else %}
                     <a href="/user">{{ current_user.name }}</a>
                 {% endif %}
             {% else %}
-                {% if request.endpoint == 'login' %}
+                {% if request.endpoint == 'auth.login' %}
                     <a href="/register">Регистрация</a>
-                {% elif request.endpoint == 'reqister' %}
+                {% elif request.endpoint == 'auth.reqister' %}
                     <a href="/login">Войти</a>
                 {% else %}
                     <a href="/login">Войти / Регистрация</a>

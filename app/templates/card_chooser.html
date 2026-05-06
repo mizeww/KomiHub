@@ -6,7 +6,7 @@
     {% for item in items %}
     <a href="{{ item.link }}" class="product-card">
         <header class="product-card__visual">
-            <img src="{{ item.img }}" alt="{{ item.name }}" class="product-card__img">
+            <img src="{{ url_for('static', filename='img/cards_chooser/' ~ item.id ~ '.jpg') }}" alt="{{ item.name }}" class="product-card__img">
         </header>
 
         <main class="product-card__info">

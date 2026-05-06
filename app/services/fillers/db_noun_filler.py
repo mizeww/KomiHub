@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from app.models import db_session
-from app.models.nouns import Noun
+from app.models.most_used_words.nouns import Noun
 
 """
 Создает словарь для карточек самых используемых существительных

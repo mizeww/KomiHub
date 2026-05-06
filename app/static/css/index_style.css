@@ -274,7 +274,7 @@
 /* Элементы верхней части (фото) */
 .product-card__visual {
     position: relative;
-    height: 300px;
+    height: 320px;
     border-radius: 15px 15px 0 0;
     overflow: hidden;
 }

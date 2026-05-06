@@ -32,5 +32,4 @@ def translate(word):
     return render_template("translate.html",
                            word=word,
                            translate=res,
-                           title="Komi Lang",
-                           TranslateForm=TranslateForm())
+                           title="Komi Lang")

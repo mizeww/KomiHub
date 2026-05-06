@@ -34,8 +34,7 @@ def reqister():
         return redirect('/')
     return render_template('register.html',
                            title='Регистрация',
-                           form=form,
-                           TranslateForm=TranslateForm())
+                           form=form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -50,11 +49,10 @@ def login():
 
         return render_template('login.html',
                                message="Неправильный логин или пароль",
-                               form=form, TranslateForm=TranslateForm())
+                               form=form)
 
     return render_template('login.html', title='Авторизация',
-                           form=form,
-                           TranslateForm=TranslateForm())
+                           form=form)
 
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])

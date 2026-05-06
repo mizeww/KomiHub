@@ -4,9 +4,8 @@ from app.forms.add_card_form import AddCardForm
 from app.forms.change_card_form import ChangeCardForm
 from app.models.urls import Url
 from app.models import db_session
-from app.forms.translate_form import TranslateForm
 from app.services.generators.cards_most_used import first_100_nouns, second_100_nouns, third_100_nouns, first_100_adj, \
-    second_100_adj
+    second_100_adj, first_100_verbs, first_50_adv
 
 from app.services.generators.cards_test_generator import generate_card_test
 
@@ -32,8 +31,7 @@ def add_card():
         return redirect('/')
     return render_template('add_card.html',
                            title='Добавить карточку',
-                           form=form,
-                           TranslateForm=TranslateForm())
+                           form=form)
 
 
 @cards_bp.route('/change_card', methods=['GET', 'POST'])
@@ -50,8 +48,7 @@ def change_card():
         return redirect('/')
     return render_template('change_card.html',
                            title='Изменить карточку',
-                           form=form,
-                           TranslateForm=TranslateForm())
+                           form=form)
 
 
 @cards_bp.route("/")
@@ -60,17 +57,15 @@ def cards():
 
     cards_chooser = db_sess.query(Url).order_by(Url.id).all()
     return render_template("card_chooser.html",
-                           TranslateForm=TranslateForm(),
                            items=cards_chooser)
 
 
-@cards_bp.route("/random100cards")
-def random_100_cards():
+@cards_bp.route("/random/<int:value>")
+def random_value_cards(value):
     db_sess = db_session.create_session()
-    word_cards = generate_card_test(100, db_sess)
+    word_cards = generate_card_test(value, db_sess)
 
     return render_template("cards.html",
-                           TranslateForm=TranslateForm(),
                            word_cards=word_cards)
 
 
@@ -84,8 +79,8 @@ def most_used_nouns(value):
     word_cards = functions[value](db_sess)
 
     return render_template("cards.html",
-                           TranslateForm=TranslateForm(),
-                           word_cards=word_cards)
+                           word_cards=word_cards,
+                           folder='nouns')
 
 @cards_bp.route("/most_used_adjectives/<value>")
 def most_used_adjectives(value):
@@ -97,5 +92,29 @@ def most_used_adjectives(value):
     word_cards = functions[value](db_sess)
 
     return render_template("cards.html",
-                           TranslateForm=TranslateForm(),
-                           word_cards=word_cards)
+                           word_cards=word_cards,
+                           folder='adjectives')
+
+@cards_bp.route("/most_used_verbs/<value>")
+def most_used_verbs(value):
+
+    functions = {'first100': first_100_verbs}
+
+    db_sess = db_session.create_session()
+    word_cards = functions[value](db_sess)
+
+    return render_template("cards.html",
+                           word_cards=word_cards,
+                           folder='verbs')
+
+@cards_bp.route("/most_used_adverbs/<value>")
+def most_used_adverbs(value):
+
+    functions = {'first50': first_50_adv}
+
+    db_sess = db_session.create_session()
+    word_cards = functions[value](db_sess)
+
+    return render_template("cards.html",
+                           word_cards=word_cards,
+                           folder='adverbs')
