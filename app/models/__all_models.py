@@ -1,4 +1,5 @@
 import unittest
+from app.models.card_views import CardView
 
 
 class MyTestCase(unittest.TestCase):

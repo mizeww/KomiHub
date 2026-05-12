@@ -1,7 +1,10 @@
+import sqlalchemy
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask_login import current_user, login_required
 
 from app.forms.add_card_form import AddCardForm
 from app.forms.change_card_form import ChangeCardForm
+from app.models.card_views import CardView
 from app.models.urls import Url
 from app.models import db_session
 from app.services.generators.cards_most_used import first_100_nouns, second_100_nouns, third_100_nouns, first_100_adj, \
@@ -9,6 +12,11 @@ from app.services.generators.cards_most_used import first_100_nouns, second_100_
 
 from app.services.generators.cards_test_generator import generate_card_test
 
+from flask import render_template, abort, session, jsonify
+from app.models.most_used_words.nouns import Noun
+from app.models.most_used_words.adjective import Adjective
+from app.models.most_used_words.verbs import Verb
+from app.models.most_used_words.adverbs import Adverb
 
 cards_bp = Blueprint('cards', __name__, template_folder='../templates', static_folder='../static')
 
@@ -118,3 +126,77 @@ def most_used_adverbs(value):
     return render_template("cards.html",
                            word_cards=word_cards,
                            folder='adverbs')
+
+
+from flask import render_template, abort
+from flask_login import current_user
+from app.models import db_session
+from app.models.card_views import CardView
+from app.models.most_used_words.nouns import Noun
+from app.models.most_used_words.adjective import Adjective
+from app.models.most_used_words.verbs import Verb
+from app.models.most_used_words.adverbs import Adverb
+import sqlalchemy
+
+
+@cards_bp.route("/view/<folder>/<int:card_id>")
+def view_single_card(folder, card_id):
+    db_sess = db_session.create_session()
+    models = {'nouns': Noun, 'adjectives': Adjective, 'verbs': Verb, 'adverbs': Adverb}
+
+    if folder not in models:
+        abort(404)
+
+    card = db_sess.query(models[folder]).get(card_id)
+    if not card:
+        abort(404)
+
+    # НАДЁЖНЫЙ ТРЕКИНГ: Если пользователь авторизован, записываем просмотр прямо здесь
+    if current_user.is_authenticated:
+        exists = db_sess.query(CardView).filter(
+            CardView.user_id == current_user.id,
+            CardView.folder == folder,
+            CardView.card_id == card_id
+        ).first()
+
+        if not exists:
+            try:
+                new_view = CardView(
+                    user_id=current_user.id,
+                    folder=folder,
+                    card_id=card_id
+                )
+                db_sess.add(new_view)
+                db_sess.commit()
+            except sqlalchemy.exc.IntegrityError:
+                db_sess.rollback()  # Защита от случайных дубликатов при обновлении страницы
+
+    return render_template("single_card.html", card=card, folder=folder)
+
+
+@cards_bp.route("/track_view/<folder>/<int:card_id>", methods=['POST'])
+@login_required
+def track_view(folder, card_id):
+    db_sess = db_session.create_session()
+
+    # Проверяем, не смотрел ли пользователь эту карточку ранее
+    exists = db_sess.query(CardView).filter(
+        CardView.user_id == current_user.id,
+        CardView.folder == folder,
+        CardView.card_id == card_id
+    ).first()
+
+    if not exists:
+        try:
+            new_view = CardView(
+                user_id=current_user.id,
+                folder=folder,
+                card_id=card_id
+            )
+            db_sess.add(new_view)
+            db_sess.commit()
+        except sqlalchemy.exc.IntegrityError:
+            db_sess.rollback()  # Защита от гонки условий при быстром двойном клике
+
+    return jsonify({'success': True})
+

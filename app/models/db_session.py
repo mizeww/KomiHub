@@ -22,6 +22,7 @@ def global_init(db_file):
     __factory = orm.sessionmaker(bind=engine)
 
     from . import __all_models
+    from app.models.card_views import CardView
 
     SqlAlchemyBase.metadata.create_all(engine)
 

@@ -1,14 +1,19 @@
 import os
+from time import mktime
 
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
-
+from app.models.card_views import CardView
 from app.models.users import User
 from app.models import db_session
 from app.forms.translate_form import TranslateForm
 
 from app.static.CONSTANTS import *
+
+import datetime
+from flask import make_response, session
 
 profile_bp = Blueprint('profile', __name__, template_folder='../templates', static_folder='../static')
 
@@ -48,9 +53,88 @@ def upload_avatar():
     return jsonify({'success': False, 'error': 'Неверный формат файла'})
 
 
+
 @profile_bp.route("/user")
 @login_required
 def user():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
-    return render_template("user.html", name=user.name, email=user.email)
+
+    # 1. Расчет статистики дней подряд через Cookies
+    today = datetime.date.today()
+    last_visit_str = request.cookies.get(f"last_visit_{user.id}")
+    streak = int(request.cookies.get(f"streak_{user.id}", 0))
+
+    if last_visit_str:
+        try:
+            last_visit = datetime.datetime.strptime(last_visit_str, "%Y-%m-%d").date()
+            if last_visit == today - datetime.timedelta(days=1):
+                streak += 1
+            elif last_visit != today:
+                streak = 1
+        except ValueError:
+            streak = 1
+    else:
+        streak = 1
+
+    # 2. Подсчет общего количества просмотров
+    cards_count = db_sess.query(CardView).filter(CardView.user_id == current_user.id).count()
+
+    # 3. НАТИВНЫЙ КАЛЕНДАРЬ АКТИВНОСТИ (Генерация матрицы на Python)
+    # Получаем словарь {дата_строкой: количество_просмотров}
+    view_data = db_sess.query(
+        func.date(CardView.viewed_at).label('date'),
+        func.count(CardView.id).label('count')
+    ).filter(CardView.user_id == current_user.id).group_by(func.date(CardView.viewed_at)).all()
+
+    activity_dict = {row.date: row.count for row in view_data}
+
+    # Генерируем дни за последние 24 недели (примерно 6 месяцев), начиная с понедельника
+    end_date = today
+    start_date = end_date - datetime.timedelta(weeks=24)
+    # Сдвигаем на ближайший прошлый понедельник для ровной сетки
+    start_date -= datetime.timedelta(days=start_date.weekday())
+
+    # Строим матрицу: 7 строк (дни недели), N столбцов (недели)
+    weeks_grid = [[] for _ in range(7)]
+
+    current_day = start_date
+    while current_day <= end_date:
+        date_str = current_day.strftime("%Y-%m-%d")
+        count = activity_dict.get(date_str, 0)
+
+        # Определяем CSS-цвет в стиле GitHub
+        if count == 0:
+            color = "#eeeeee"
+        elif count <= 2:
+            color = "#9be9a8"
+        elif count <= 5:
+            color = "#40c463"
+        elif count <= 10:
+            color = "#30a14e"
+        else:
+            color = "#216e39"
+
+        day_data = {
+            'date': current_day.strftime("%d.%m.%Y"),
+            'count': count,
+            'color': color
+        }
+
+        weeks_grid[current_day.weekday()].append(day_data)
+        current_day += datetime.timedelta(days=1)
+
+    response = make_response(render_template(
+        "user.html",
+        name=user.name,
+        email=user.email,
+        streak_days=streak,
+        cards_viewed=cards_count,
+        weeks_grid=weeks_grid  # Отправляем готовую сетку
+    ))
+
+    max_age = 60 * 60 * 24 * 365
+    response.set_cookie(f"last_visit_{user.id}", str(today), max_age=max_age)
+    response.set_cookie(f"streak_{user.id}", str(streak), max_age=max_age)
+
+    return response

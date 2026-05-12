@@ -1,49 +1,90 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <!-- Аватар -->
-                    <div class="avatar-container mb-3">
-                        <img id="avatar-img"
-                             src="{{ current_user.avatar if current_user.avatar else url_for('static', filename='avatars/default.png') }}"
-                             class="rounded-circle"
-                             width="200"
-                             height="200"
-                             alt="Аватар">
-                    </div>
 
-                    <!-- Кнопка для выбора файла -->
-                    <div class="mb-3">
-                        <label for="avatar-input" class="btn btn-primary">
-                            <i class="fas fa-camera"></i> Изменить аватар
-                        </label>
-                        <input type="file"
-                               id="avatar-input"
-                               accept="image/*"
-                               style="display: none;">
-                    </div>
+<!-- Локальное подключение стилей календаря -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cal-heatmap.css') }}">
 
-                    <!-- Прогресс-бар (опционально) -->
-                    <div class="progress mb-3" style="display: none;" id="upload-progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                             role="progressbar"
-                             style="width: 0%">
-                        </div>
-                    </div>
+<div class="container mt-4 d-flex flex-column align-items-center" style="min-height: 70vh;">
+    <div class="text-center bg-transparent border-0 p-4 w-100" style="max-width: 800px;">
 
-                    <h5 class="card-title">{{ name }}</h5>
-                    <p class="card-text">{{ email }}</p>
-                </div>
+        <!-- Аватар и профиль -->
+        <div class="avatar-container mb-3 position-relative d-inline-block">
+            <img id="avatar-img"
+                 src="{{ current_user.avatar if current_user.avatar else url_for('static', filename='avatars/default.png') }}"
+                 class="rounded-circle border"
+                 width="150"
+                 height="150"
+                 alt="Аватар">
+        </div>
+
+        <div class="mb-3">
+            <label for="avatar-input" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-camera"></i> Изменить аватар
+            </label>
+            <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+        </div>
+
+        <h3 class="mt-2 font-weight-bold">{{ name }}</h3>
+        <p class="text-muted">{{ email }}</p>
+
+        <!-- Блок текстовой статистики -->
+        <div class="mt-4 pt-3 border-top mx-auto" style="max-width: 400px;">
+            <h5 class="text-center mb-3">Ваша статистика</h5>
+            <div class="d-flex justify-content-between my-2">
+                <span>Дней подряд:</span>
+                <strong class="text-success">{{ streak_days }}</strong>
+            </div>
+            <div class="d-flex justify-content-between my-2">
+                <span>Карточек просмотрено:</span>
+                <strong>{{ cards_viewed }}</strong>
             </div>
         </div>
+
+        <!-- ГРАФИЧЕСКИЙ КАЛЕНДАРЬ АКТИВНОСТИ (ЧИСТЫЙ HTML/CSS) -->
+        <div class="mt-5 pt-4 border-top w-100 text-center">
+            <h5 class="mb-4">Календарь активности изучения слов</h5>
+
+            <div class="d-flex justify-content-center align-items-center overflow-auto py-2">
+                <!-- Подписи дней недели -->
+                <div class="d-flex flex-column justify-content-between text-muted small me-2" style="height: 105px; font-size: 10px; line-height: 1;">
+                    <span>Пн</span>
+                    <span>Чт</span>
+                    <span>Вс</span>
+                </div>
+
+                <!-- Таблица-сетка активности -->
+                <div class="d-flex flex-column justify-content-between" style="height: 115px;">
+                    {% for row in weeks_grid %}
+                    <div class="d-flex">
+                        {% for day in row %}
+                        <div class="cell"
+                             style="width: 12px; height: 12px; background-color: {{ day.color }}; margin: 2px; border-radius: 2px;"
+                             title="{{ day.date }} — Просмотрено карточек: {{ day.count }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Легенда -->
+            <div class="d-flex justify-content-center align-items-center mt-3 text-muted small" style="font-size: 11px;">
+                <span class="me-2">Меньше</span>
+                <div style="width: 12px; height: 12px; background-color: #eeeeee; margin: 1px; border-radius: 2px;"></div>
+                <div style="width: 12px; height: 12px; background-color: #9be9a8; margin: 1px; border-radius: 2px;"></div>
+                <div style="width: 12px; height: 12px; background-color: #40c463; margin: 1px; border-radius: 2px;"></div>
+                <div style="width: 12px; height: 12px; background-color: #30a14e; margin: 1px; border-radius: 2px;"></div>
+                <div style="width: 12px; height: 12px; background-color: #216e39; margin: 1px; border-radius: 2px;"></div>
+                <span class="ms-2">Больше</span>
+            </div>
+
+            <div class="mt-2 text-muted small" style="font-size: 12px;">
+                Показывает интенсивность просмотра карточек за последние 6 месяцев. Наведите на квадрат, чтобы увидеть дату.
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- JavaScript для обработки загрузки -->
-<script> src="{{ url_for('static', filename='javascript/script_avatar_addition.js') }}" defer </script>
-
+<script src="{{ url_for('static', filename='javascript/script_avatar_addition.js') }}" defer></script>
 {% endblock %}
