@@ -1,4 +1,3 @@
-<script>
 document.addEventListener('DOMContentLoaded', function() {
     const avatarInput = document.getElementById('avatar-input');
     const avatarImg = document.getElementById('avatar-img');
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const reader = new FileReader();
         reader.onload = function(e) {
             avatarImg.src = e.target.result;
-        };
+        }
         reader.readAsDataURL(file);
 
         uploadAvatar(file);
@@ -76,4 +75,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 });
-</script>
