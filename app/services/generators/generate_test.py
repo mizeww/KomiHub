@@ -6,7 +6,7 @@ import re
 
 N_WORDS = 12460 # Предположительное число слов
 
-def generate_card_test(n: int, db_sess: Session):
+def generate_trainer_test(db_sess: Session, n=20):
     unique_word_list = sample(range(1, N_WORDS + 1), n)
 
     for word_id in unique_word_list:
@@ -21,3 +21,5 @@ def generate_card_test(n: int, db_sess: Session):
                     id=word_id)
 
         yield card
+
+

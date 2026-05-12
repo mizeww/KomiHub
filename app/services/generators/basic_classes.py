@@ -9,3 +9,4 @@ class Card:
         self.word_rus = word_rus
         self.suffix = suffix
         self.examples = examples
+

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content1 %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quiz_style.css') }}">
+
+<div class="quiz-card text-center">
+    <h2 class="text-muted">Тест завершен!</h2>
+
+    <div class="result-score">
+        {{ total }} <span style="font-size: 2rem; color: #cbd5e1;">/ {{ max_questions }}</span>
+    </div>
+
+    <p class="congrats-text">
+        {% if total == max_questions %}
+            Великолепно! Вы знаете все слова. 🏆
+        {% elif total > max_questions // 2 %}
+            Хороший результат! Продолжайте в том же духе. 👍
+        {% else %}
+            Нужно еще немного потренироваться. 💪
+        {% endif %}
+    </p>
+
+    <div class="d-grid gap-3">
+        <a href="{{trainers}}" class="btn-next text-decoration-none">
+            Попробовать еще раз
+        </a>
+        <a href="/" class="reset-link">Вернуться на главную</a>
+    </div>
+</div>
+{% endblock %}

@@ -6,9 +6,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-class UrlIndex(SqlAlchemyBase):
+class UrlTrainers(SqlAlchemyBase):
 
-    __tablename__ = 'url_index'
+    __tablename__ = 'url_trainers'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)

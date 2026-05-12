@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="catalog-grid">
+    {% for item in items %}
+    <a href="{{ item.link }}" class="product-card">
+        <header class="product-card__visual">
+            <img src="{{ url_for('static', filename='img/cards_chooser/' ~ item.id ~ '.jpg') }}" alt="{{ item.name }}" class="product-card__img">
+        </header>
+
+        <main class="product-card__info">
+            <h2 class="product-card__title">{{ item.name }}</h2>
+            <p class="product-card__desc">{{ item.preview_text }}</p>
+        </main>
+    </a>
+    {% endfor %}
+</section>
+{% endblock %}

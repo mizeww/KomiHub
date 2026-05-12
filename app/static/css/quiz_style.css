@@ -1,0 +1,126 @@
+/* 1. Центрируем всё содержимое по центру экрана */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: #f0f2f5;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;    /* Центр по вертикали */
+    justify-content: center; /* Центр по горизонтали */
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* 2. Делаем карточку широкой (горизонтальной) */
+/* Обновленный контейнер карточки */
+.quiz-card {
+    width: 95%;
+    max-width: 900px;
+    background: white;
+    border-radius: 24px;
+    /* Увеличиваем отступы: сверху 3rem, по бокам 4rem, снизу 4rem */
+    padding: 3rem 4rem 4rem 4rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+
+    /* Добавляем внешний отступ снизу, чтобы карточка не прижималась к краю браузера */
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+/* 3. Горизонтальное расположение контента внутри (опционально) */
+.quiz-content {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.word-kom {
+    font-size: 4rem;         /* Крупное слово */
+    font-weight: 900;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.word-rus-value {
+    font-size: 2rem;
+    color: #3b82f6;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+/* 4. Кнопки в ряд, чтобы подчеркнуть ширину */
+.options-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Две широкие колонки */
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.btn-check + .btn-outline-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+    padding: 1.5rem;         /* Делаем кнопки выше */
+    border-radius: 16px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.btn-check:checked + .btn-outline-custom {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: scale(1.02);
+}
+
+/* Кнопка "Ответить" тоже широкая */
+.btn-next {
+    width: 100%;
+    padding: 1.2rem;
+    border-radius: 16px;
+    background: #1e293b;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Прогресс-бар во всю ширину сверху */
+.progress {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+/* Адаптивность: на телефонах всё же схлопываем в колонку */
+@media (max-width: 768px) {
+    .quiz-card {
+        padding: 2rem;
+    }
+    .options-group {
+        grid-template-columns: 1fr;
+    }
+    .word-kom {
+        font-size: 2.5rem;
+    }
+}
+
+.result-score {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #3b82f6;
+            margin: 1.5rem 0;
+        }
+        .congrats-text {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 2rem;
+        }
