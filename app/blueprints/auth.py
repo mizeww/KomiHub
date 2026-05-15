@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.forms.auth.login_form import LoginForm
 from app.forms.auth.register_form import RegisterForm
+from app.models.change_password import ChangePasswordForm
 from app.models.users import User
 from app.models import db_session
 from app.forms.translate_form import TranslateForm
@@ -59,6 +60,43 @@ def login():
 
     return render_template('login.html', title='Авторизация',
                            form=form)
+
+
+
+
+# Импортируйте форму ChangePasswordForm в зависимости от вашей структуры
+
+@auth_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    message = None
+
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        try:
+            # Получаем свежую запись пользователя из БД
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+
+            # Проверяем правильность текущего пароля
+            if not user.check_password(form.old_password.data):
+                message = "Неверный текущий пароль"
+            else:
+                # Хешируем и устанавливаем новый пароль
+                user.set_password(form.new_password.data)
+                db_sess.commit()
+
+                # Показываем уведомление (flash-сообщение) при успешной смене
+                flash("Пароль успешно изменен!", "success")
+                return redirect('/user')
+
+        except Exception as e:
+            db_sess.rollback()
+            raise e
+        finally:
+            db_sess.close()  # Предотвращаем database is locked
+
+    return render_template('change_password.html', title='Смена пароля', form=form, message=message)
 
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
