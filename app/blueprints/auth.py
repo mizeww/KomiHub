@@ -15,26 +15,32 @@ auth_bp = Blueprint('auth', __name__, template_folder='../templates', static_fol
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
-        user = User(
-            name=form.name.data,
-            email=form.email.data,
-        )
-        user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('register.html',
-                           title='Регистрация',
-                           form=form)
+        try:
+            # Проверяем, существует ли уже пользователь
+            user_exists = db_sess.query(User).filter(User.email == form.email.data).first()
+            if user_exists:
+                return render_template('register.html', title='Регистрация', form=form,
+                                       message="Такой пользователь уже есть")
+
+            # Создаем нового пользователя
+            user = User(
+                name=form.name.data,
+                email=form.email.data
+            )
+            user.set_password(form.password.data)
+
+            db_sess.add(user)
+            db_sess.commit()  # Строка 33, которая вызывала блокировку
+
+            return redirect('/login')
+        except Exception as e:
+            db_sess.rollback()  # Откатываем транзакцию при сбое
+            raise e
+        finally:
+            # Снимаем привязку сессии к текущему потоку
+            db_sess.close()
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -59,4 +65,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    db_sess = db_session.create_session()
+    db_sess.close()
+
     return redirect("/")

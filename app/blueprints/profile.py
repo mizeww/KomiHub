@@ -1,7 +1,7 @@
 import os
 from time import mktime
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, current_app
 from flask_login import login_required, current_user
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
@@ -22,36 +22,55 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@profile_bp.route('/upload_avatar', methods=['POST'])
+
+
+@profile_bp.route("/upload_avatar", methods=["POST"])
 @login_required
 def upload_avatar():
     if 'avatar' not in request.files:
-        return jsonify({'success': False, 'error': 'Нет файла'})
+        return jsonify({'success': False, 'error': 'Ключ "avatar" отсутствует в request.files'}), 400
 
     file = request.files['avatar']
-
     if file.filename == '':
-        return jsonify({'success': False, 'error': 'Файл не выбран'})
+        return jsonify({'success': False, 'error': 'Файл не выбран'}), 400
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(f"user_{current_user.id}_{file.filename}")
-        filepath = os.path.join(profile_bp.config['UPLOAD_FOLDER'], filename)
+    if file:
+        ext = os.path.splitext(file.filename)[1]
+        filename = secure_filename(f"user_{current_user.id}{ext}")
 
-        file.save(filepath)
+        avatar_dir = os.path.join(current_app.root_path, 'static', 'avatars')
+        if not os.path.exists(avatar_dir):
+            os.makedirs(avatar_dir, exist_ok=True)
 
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == current_user.id).first()
-        user.avatar = f'/static/avatars/{filename}'
-        db_sess.commit()
+        upload_path = os.path.join(avatar_dir, filename)
 
-        return jsonify({
-            'success': True,
-            'avatar_url': user.avatar,
-            'message': 'Изображение успешно загружено'
-        })
+        # ГАРАНТИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ: объявляем переменную ДО блока сохранения и работы с БД
+        db_avatar_path = f"static/avatars/{filename}"
 
-    return jsonify({'success': False, 'error': 'Неверный формат файла'})
+        try:
+            # 1. Сохраняем физический файл на диск
+            file.save(upload_path)
 
+            # 2. Запись пути в базу данных SQLite
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+            user.avatar = db_avatar_path
+            db_sess.commit()
+            db_sess.close()  # Закрываем сессию, чтобы избежать database is locked
+
+            # 3. Обновляем объект текущего пользователя в текущей сессии Flask-Login
+            current_user.avatar = db_avatar_path
+
+            # Возвращаем путь со слэшем для мгновенного отображения во фронтенде
+            return jsonify({'success': True, 'path': f"/{db_avatar_path}"})
+
+        except Exception as e:
+            # Безопасное закрытие сессии в случае непредвиденного сбоя при записи
+            if 'db_sess' in locals():
+                db_sess.close()
+            return jsonify({'success': False, 'error': f"Системная ошибка: {str(e)}"}), 500
+
+    return jsonify({'success': False, 'error': 'Неподдерживаемый формат файла'}), 400
 
 
 @profile_bp.route("/user")
@@ -124,13 +143,15 @@ def user():
         weeks_grid[current_day.weekday()].append(day_data)
         current_day += datetime.timedelta(days=1)
 
+    db_sess.close()
+
     response = make_response(render_template(
         "user.html",
         name=user.name,
         email=user.email,
         streak_days=streak,
         cards_viewed=cards_count,
-        weeks_grid=weeks_grid  # Отправляем готовую сетку
+        weeks_grid=weeks_grid
     ))
 
     max_age = 60 * 60 * 24 * 365

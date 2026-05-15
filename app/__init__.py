@@ -21,8 +21,14 @@ def create_app(config_class=DevelopmentConfig):
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Если используете SQLAlchemy:
-        return db_sess.get(User, user_id)
+        db_sess = db_session.create_session()
+        try:
+            # Flask-Login вызывает эту функцию при каждом обновлении любой страницы
+            return db_sess.query(User).get(int(user_id))
+        except Exception:
+            return None
+        finally:
+            db_sess.close()  # ГАРАНТИРОВАННО СНИМАЕМ БЛОКИРОВКУ ПОСЛЕ ПРОВЕРКИ
 
     # Регистрация Blueprints
     from app.blueprints.main import main_bp

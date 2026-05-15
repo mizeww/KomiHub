@@ -170,8 +170,11 @@ def view_single_card(folder, card_id):
                 db_sess.commit()
             except sqlalchemy.exc.IntegrityError:
                 db_sess.rollback()  # Защита от случайных дубликатов при обновлении страницы
+    html_content = render_template("single_card.html", card=card, folder=folder)
 
-    return render_template("single_card.html", card=card, folder=folder)
+    db_sess.close()
+
+    return html_content
 
 
 @cards_bp.route("/track_view/<folder>/<int:card_id>", methods=['POST'])

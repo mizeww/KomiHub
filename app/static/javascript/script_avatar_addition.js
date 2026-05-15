@@ -1,77 +1,53 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const avatarInput = document.getElementById('avatar-input');
-    const avatarImg = document.getElementById('avatar-img');
-    const uploadProgress = document.getElementById('upload-progress');
-    const progressBar = uploadProgress.querySelector('.progress-bar');
+const avatarInput = document.getElementById('avatar-input');
+const avatarImg = document.getElementById('avatar-img');
 
-    avatarInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+if (avatarInput && avatarImg) {
+    avatarInput.addEventListener('change', function(event) {
+        const selectedFile = event.target.files[0];
+        if (!selectedFile) return;
 
-        if (!file.type.startsWith('image/')) {
-            showNotification('Пожалуйста, выберите изображение', 'error');
-            return;
-        }
+        avatarImg.src = URL.createObjectURL(selectedFile);
 
-        if (file.size > 5 * 1024 * 1024) {
-            showNotification('Файл слишком большой. Максимальный размер: 5MB', 'error');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            avatarImg.src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-
-        uploadAvatar(file);
-    });
-
-    function uploadAvatar(file) {
         const formData = new FormData();
-        formData.append('avatar', file);
+        formData.append('avatar', selectedFile);
 
-        uploadProgress.style.display = 'block';
-        progressBar.style.width = '0%';
+        // Находим CSRF-токен на странице
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const headers = {
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        // Если токен найден, добавляем его в заголовки запроса
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
 
         fetch('/upload_avatar', {
             method: 'POST',
             body: formData,
+            headers: headers
         })
-        .then(response => response.json())
+        .then(response => {
+            const contentType = response.headers.get("content-type");
+
+            // Защита от падения парсера: если сервер вернул HTML вместо JSON
+            if (contentType && contentType.indexOf("application/json") === -1) {
+                throw new Error(`Сервер вернул HTML-страницу (Код ${response.status}). Проверьте консоль Python.`);
+            }
+
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                avatarImg.src = data.avatar_url + '?t=' + new Date().getTime();
-                progressBar.style.width = '100%';
-                showNotification('Аватар успешно обновлен!', 'success');
-
-                setTimeout(() => {
-                    uploadProgress.style.display = 'none';
-                }, 1000);
+                console.log('Аватар успешно изменен.');
             } else {
-                showNotification(data.error || 'Ошибка при загрузке', 'error');
-                uploadProgress.style.display = 'none';
+                alert('Ошибка: ' + data.error);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showNotification('Ошибка при загрузке аватара', 'error');
-            uploadProgress.style.display = 'none';
+            console.error('Критический сбой:', error);
+            alert('Сбой загрузки: ' + error.message);
         });
-    }
-
-    function showNotification(message, type) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
-        alertDiv.style.zIndex = '9999';
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 3000);
-    }
-});
+    });
+}
