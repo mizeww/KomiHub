@@ -21,8 +21,14 @@ def create_app(config_class=DevelopmentConfig):
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Если используете SQLAlchemy:
-        return db_sess.get(User, user_id)
+        db_sess = db_session.create_session()
+        try:
+            # Flask-Login вызывает эту функцию при каждом обновлении любой страницы
+            return db_sess.query(User).get(int(user_id))
+        except Exception:
+            return None
+        finally:
+            db_sess.close()  # ГАРАНТИРОВАННО СНИМАЕМ БЛОКИРОВКУ ПОСЛЕ ПРОВЕРКИ
 
     # Регистрация Blueprints
     from app.blueprints.main import main_bp
@@ -35,6 +41,7 @@ def create_app(config_class=DevelopmentConfig):
     from app.blueprints.about import about_bp
     from app.blueprints.trainers import trainers_bp
     # from app.blueprints.lessons import lessons_bp
+    from app.blueprints.info import info_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -46,6 +53,7 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(about_bp, url_prefix='/about')
     app.register_blueprint(trainers_bp, url_prefix='/trainers')
     # app.register_blueprint(lessons_bp, url_prefix='/lessons')
+    app.register_blueprint(info_bp)
 
     @app.context_processor
     def inject_common_variables():

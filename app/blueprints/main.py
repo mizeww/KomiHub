@@ -6,6 +6,7 @@ from app.forms.translate_form import TranslateForm
 
 main_bp = Blueprint('main', __name__, template_folder='../templates', static_folder='../static')
 
+
 @main_bp.route('/')
 def index():
     db_sess = db_session.create_session()

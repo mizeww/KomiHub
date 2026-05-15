@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.forms.auth.login_form import LoginForm
 from app.forms.auth.register_form import RegisterForm
+from app.models.change_password import ChangePasswordForm
 from app.models.users import User
 from app.models import db_session
 from app.forms.translate_form import TranslateForm
@@ -15,26 +16,32 @@ auth_bp = Blueprint('auth', __name__, template_folder='../templates', static_fol
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
-        user = User(
-            name=form.name.data,
-            email=form.email.data,
-        )
-        user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('register.html',
-                           title='Регистрация',
-                           form=form)
+        try:
+            # Проверяем, существует ли уже пользователь
+            user_exists = db_sess.query(User).filter(User.email == form.email.data).first()
+            if user_exists:
+                return render_template('register.html', title='Регистрация', form=form,
+                                       message="Такой пользователь уже есть")
+
+            # Создаем нового пользователя
+            user = User(
+                name=form.name.data,
+                email=form.email.data
+            )
+            user.set_password(form.password.data)
+
+            db_sess.add(user)
+            db_sess.commit()  # Строка 33, которая вызывала блокировку
+
+            return redirect('/login')
+        except Exception as e:
+            db_sess.rollback()  # Откатываем транзакцию при сбое
+            raise e
+        finally:
+            # Снимаем привязку сессии к текущему потоку
+            db_sess.close()
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -55,8 +62,48 @@ def login():
                            form=form)
 
 
+
+
+# Импортируйте форму ChangePasswordForm в зависимости от вашей структуры
+
+@auth_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    message = None
+
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        try:
+            # Получаем свежую запись пользователя из БД
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+
+            # Проверяем правильность текущего пароля
+            if not user.check_password(form.old_password.data):
+                message = "Неверный текущий пароль"
+            else:
+                # Хешируем и устанавливаем новый пароль
+                user.set_password(form.new_password.data)
+                db_sess.commit()
+
+                # Показываем уведомление (flash-сообщение) при успешной смене
+                flash("Пароль успешно изменен!", "success")
+                return redirect('/user')
+
+        except Exception as e:
+            db_sess.rollback()
+            raise e
+        finally:
+            db_sess.close()  # Предотвращаем database is locked
+
+    return render_template('change_password.html', title='Смена пароля', form=form, message=message)
+
+
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
+    db_sess = db_session.create_session()
+    db_sess.close()
+
     return redirect("/")
