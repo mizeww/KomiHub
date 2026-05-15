@@ -39,6 +39,7 @@ def create_app(config_class=DevelopmentConfig):
     from app.blueprints.translate import translate_bp
     from app.blueprints.trainers import trainers_bp
     # from app.blueprints.lessons import lessons_bp
+    from app.blueprints.info import info_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -48,6 +49,7 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(translate_bp)
     app.register_blueprint(trainers_bp, url_prefix='/trainers')
     # app.register_blueprint(lessons_bp, url_prefix='/lessons')
+    app.register_blueprint(info_bp)
 
     @app.context_processor
     def inject_common_variables():

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 800px;">
+    <h2 class="mb-4 text-primary font-weight-bold">Полезные ресурсы</h2>
+    <p class="text-muted">Ссылки на внешние источники, словари и образовательные порталы для углубленного изучения языка.</p>
+
+    <div class="row g-4 mt-2">
+        <!-- Ссылка 1 -->
+        <div class="col-md-6">
+            <div class="card p-3 h-100 shadow-sm">
+                <h5 class="font-weight-bold mb-2">Онлайн-словари</h5>
+                <p class="text-muted small">Электронная база данных для быстрого перевода слов и поиска грамматических форм.</p>
+                <a href="https://komi-rus.ru" target="_blank" class="btn btn-sm btn-outline-primary mt-auto align-self-start">Перейти на сайт</a>
+            </div>
+        </div>
+        <!-- Ссылка 2 -->
+        <div class="col-md-6">
+            <div class="card p-3 h-100 shadow-sm">
+                <h5 class="font-weight-bold mb-2">Литература и медиа</h5>
+                <p class="text-muted small">Порталы с аудиоматериалами, книгами и статьями на коми языке.</p>
+                <a href="https://komi-ugr.ru" target="_blank" class="btn btn-sm btn-outline-primary mt-auto align-self-start">Перейти на сайт</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
