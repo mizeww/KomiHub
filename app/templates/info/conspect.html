@@ -1,11 +1,193 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-5" style="max-width: 800px; line-height: 1.6;">
-    <h2 class="mb-4 text-primary font-weight-bold">О коми языке</h2>
-    <div class="card p-4 border-0 shadow-sm bg-light">
-        <p>Коми язык (коми кыв) принадлежит к пермской ветви финно-угорской семьи языков. Он является одним из государственных языков Республики Коми.</p>
-        <p>Современная письменность основана на кириллице с добавлением двух дополнительных букв: <strong>Ӧӧ</strong> и <strong>Іі</strong>. Алфавит состоит из 35 букв.</p>
-        <p>Изучение коми языка помогает глубже понять уникальную культуру, традиции и историю северных регионов России.</p>
+<div class="container mt-5 mb-5" style="max-width: 900px; line-height: 1.7; color: #333;">
+    <h1 class="mb-2 text-primary font-weight-bold"> Полный грамматический конспект коми языка</h1>
+    <p class="text-muted mb-5">Фундаментальное руководство по фонетике, морфологии, именному склонению и глагольной системе для самостоятельного изучения.</p>
+
+    <!-- Содержание для быстрой навигации -->
+    <div class="card p-3 mb-5 bg-light border-0 shadow-sm">
+        <h5 class="font-weight-bold mb-3">Содержание конспекта:</h5>
+        <ul class="mb-0" style="list-style-type: none; padding-left: 0;">
+            <li><a href="#phonetics" class="text-decoration-none">1. Фонетика, графика и правила чтения</a></li>
+            <li><a href="#nouns" class="text-decoration-none">2. Морфология существительных: Система 17 падежей</a></li>
+            <li><a href="#verbs" class="text-decoration-none">3. Спряжение глаголов: Утвердительная и отрицательная формы</a></li>
+            <li><a href="#syntax" class="text-decoration-none">4. Синтаксические особенности построения предложений</a></li>
+        </ul>
+    </div>
+
+    <!-- Раздел 1: Фонетика -->
+    <section id="phonetics" class="mb-5 pt-3">
+        <h3 class="text-success font-weight-bold mb-3">1. Фонетика, графика и правила чтения</h3>
+        <p>Современный алфавит коми языка базируется на кириллической графике и состоит из 35 букв. Главное отличие от русского языка заключается в наличии двух уникальных графем: <strong>Ӧӧ</strong> и <strong>Іі</strong>.</p>
+
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white shadow-sm h-100">
+                    <h5 class="font-weight-bold text-primary">Специфические гласные</h5>
+                    <ul>
+                        <li><strong>Ӧ ӧ</strong> — средний гласный звук, напоминающий что-то среднее между русскими [о] и [э], либо английский нейтральный звук [ə] (как в слове <i>about</i>). Пример: <i>ӧшынь</i> (окно), <i>мӧс</i> (корова).</li>
+                        <li><strong>І і</strong> — обозначает звук [и], но в отличие от обычной буквы <b>И</b>, она <strong>не смягчает</strong> предыдущую согласную. Пример: <i>ди</i> [д'и] (остров) — мягкий «д», но <i>ді</i> [ди] (росомаха) — твердый «д».</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white shadow-sm h-100">
+                    <h5 class="font-weight-bold text-primary">Ударение и слогоделение</h5>
+                    <p>Ударение в коми языке является <strong>разноместным и подвижным</strong>, однако в большинстве исконных слов оно падает на <strong>первый слог</strong>. При добавлении падежных или личных суффиксов ударение может смещаться, что коренным образом меняет интонационный рисунок речи.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Раздел 2: Существительные -->
+    <section id="nouns" class="mb-5 pt-3">
+        <h3 class="text-success font-weight-bold mb-3">2. Морфология существительных: Система 17 падежей</h3>
+        <p>В коми языке отсутствует грамматическая категория рода (слова «он», «она», «оно» переводятся одинаково — <i>сийӧ</i>). Однако грамматика компенсирует это богатейшей системой склонения, насчитывающей 17 падежей. Падежи делятся на две большие группы: субъектно-объектные и пространственные (локативные).</p>
+
+        <h5 class="font-weight-bold mt-4 mb-3 text-secondary">Таблица основных падежей на примере слова «керка» (дом):</h5>
+        <div class="table-responsive shadow-sm">
+            <table class="table table-bordered table-striped bg-white align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Название падежа</th>
+                        <th>Вопрос</th>
+                        <th>Суффикс</th>
+                        <th>Пример формы</th>
+                        <th>Перевод</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Именительный (Номинатив)</b></td>
+                        <td>Код? Мый? (Кто? Что?)</td>
+                        <td>—</td>
+                        <td><i>керка</i></td>
+                        <td>дом</td>
+                    </tr>
+                    <tr>
+                        <td><b>Родительный (Генитив)</b></td>
+                        <td>Кодлӧн? Мыйлон? (Кого? Чего?)</td>
+                        <td><span class="badge bg-primary">-лӧн</span></td>
+                        <td><i>керкалӧн</i></td>
+                        <td>дома (принадлежность)</td>
+                    </tr>
+                    <tr>
+                        <td><b>Дательный (Датив)</b></td>
+                        <td>Кодлы? Мыйлы? (Кому? Чему?)</td>
+                        <td><span class="badge bg-primary">-лы</span></td>
+                        <td><i>керкалы</i></td>
+                        <td>дому</td>
+                    </tr>
+                    <tr>
+                        <td><b>Винительный (Аккузатив)</b></td>
+                        <td>Кодӧс? Мый? (Кого? Что?)</td>
+                        <td><span class="badge bg-primary">-ӧс / —</span></td>
+                        <td><i>керкаӧс</i></td>
+                        <td>дом (вижу дом)</td>
+                    </tr>
+                    <tr>
+                        <td><b>Творительный (Инструменталис)</b></td>
+                        <td>Кодӧн? Мыйӧн? (Кем? Чем?)</td>
+                        <td><span class="badge bg-primary">-ӧн</span></td>
+                        <td><i>керкаӧн</i></td>
+                        <td>домом (при помощи дома)</td>
+                    </tr>
+                    <tr>
+                        <td><b>Соединительный (Комитатив)</b></td>
+                        <td>Кодкӧд? Мыйкӧд? (С кем? С чем?)</td>
+                        <td><span class="badge bg-primary">-кӧд</span></td>
+                        <td><i>керкакӧд</i></td>
+                        <td>с домом</td>
+                    </tr>
+                    <tr>
+                        <td><b>Местный (Инессив)</b></td>
+                        <td>Кыни? (Где? Внутри чего?)</td>
+                        <td><span class="badge bg-success">-ын</span></td>
+                        <td><i>керкаын</i></td>
+                        <td>в доме</td>
+                    </tr>
+                    <tr>
+                        <td><b>Входительный (Иллатив)</b></td>
+                        <td>Кытчӧ? (Куда? Внутрь чего?)</td>
+                        <td><span class="badge bg-success">-ӧ</span></td>
+                        <td><i>керкаӧ</i></td>
+                        <td>в дом (войти в дом)</td>
+                    </tr>
+                    <tr>
+                        <td><b>Исходный (Элатив)</b></td>
+                        <td>Кытысь? (Откуда? Изнутри чего?)</td>
+                        <td><span class="badge bg-success">-ысь</span></td>
+                        <td><i>керкаысь</i></td>
+                        <td>из дома</td>
+                    </tr>
+                    <tr>
+                        <td><b>Отдалительный (Аблатив)</b></td>
+                        <td>Кодлысь? Мыйлысь? (От кого/чего?)</td>
+                        <td><span class="badge bg-success">-лысь</span></td>
+                        <td><i>керкалысь</i></td>
+                        <td>от дома / у дома</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="mt-3 text-muted small">* Примечание: Пространственные падежи (начинающиеся в таблице с Местного падежа) имеют регулярное суффиксальное выражение и присоединяются к основе слова без изменения корня.</p>
+    </section>
+
+    <!-- Раздел 3: Глаголы -->
+    <section id="verbs" class="mb-5 pt-3">
+        <h3 class="text-success font-weight-bold mb-3">3. Спряжение глаголов: Утвердительная и отрицательная формы</h3>
+        <p>Глаголы в коми языке изменяются по лицам, числам и временам. Существует два типа спряжения, определяемых по гласному звуку в суффиксе инфинитива. Самая яркая черта — наличие <strong>специального отрицательного глагола</strong>, который спрягается вместо основного действия.</p>
+
+        <h5 class="font-weight-bold text-secondary mb-3">Настоящее время (Презенс) на примере глагола «мунны» (идти):</h5>
+        <div class="row g-4">
+            <!-- Утверждение -->
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white shadow-sm">
+                    <h6 class="font-weight-bold text-primary mb-3">Утвердительная форма</h6>
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr><td><b>1 л. (Я)</b></td><td><i>Ме муна</i></td><td>Я иду</td></tr>
+                            <tr><td><b>2 л. (Ты)</b></td><td><i>Тэ мунан</i></td><td>Ты идешь</td></tr>
+                            <tr><td><b>3 л. (Он/Она)</b></td><td><i>Сийӧ мунӧ</i></td><td>Он/Она идет</td></tr>
+                            <tr class="border-top"><td><b>1 л. мн. (Мы)</b></td><td><i>Ми мунам</i></td><td>Мы идем</td></tr>
+                            <tr><td><b>2 л. мн. (Вы)</b></td><td><i>Ті мунадныд</i></td><td>Вы идете</td></tr>
+                            <tr><td><b>3 л. мн. (Они)</b></td><td><i>Ная муноны</i></td><td>Они идут</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Отрицание -->
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white shadow-sm">
+                    <h6 class="font-weight-bold text-danger mb-3">Отрицательная форма</h6>
+                    <p class="small text-muted">Строится при помощи отрицательных частиц <i>ог, он, оз</i>, изменяющихся по лицам, и усеченной основы глагола:</p>
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr><td><b>1 л. (Я)</b></td><td><i>Ме <strong>ог</strong> мун</i></td><td>Я не иду</td></tr>
+                            <tr><td><b>2 л. (Ты)</b></td><td><i>Тэ <strong>он</strong> мун</i></td><td>Ты не идешь</td></tr>
+                            <tr><td><b>3 л. (Он/Она)</b></td><td><i>Сийӧ <strong>оз</strong> мун</i></td><td>Он/Она не идет</td></tr>
+                            <tr class="border-top"><td><b>1 л. мн. (Мы)</b></td><td><i>Ми <strong>огӧ(й)</strong> мунӧй</i></td><td>Мы не идем</td></tr>
+                            <tr><td><b>2 л. мн. (Вы)</b></td><td><i>Ті <strong>онӧ(й)</strong> мунӧй</i></td><td>Вы не идете</td></tr>
+                            <tr><td><b>3 л. мн. (Они)</b></td><td><i>Ная <strong>оз</strong> мунны</i></td><td>Они не идут</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Раздел 4: Синтаксис -->
+    <section id="syntax" class="mb-5 pt-3">
+        <h3 class="text-success font-weight-bold mb-3">4. Синтаксические особенности построения предложений</h3>
+        <div class="p-4 bg-light rounded shadow-sm border-start border-primary border-4">
+            <p class="mb-2">Базовый порядок слов в простом утвердительном предложении подчиняется структуре <strong>SVO (Субъект — Глагол — Объект)</strong>, однако благодаря развитой системе падежей порядок слов может становиться свободным для логического выделения интонацией определенных членов предложения.</p>
+            <p class="mb-0"><strong>Важное правило послелогов:</strong> В коми языке практически отсутствуют предлоги. Отношения между объектами выражаются через <i>послелоги</i>, которые ставятся <strong>после</strong> существительного. Например: <i>пызан вылын</i> — на столе (буквально: «стол на-поверхности»), <i>керка дорын</i> — у дома (буквально: «дом у-края»).</p>
+        </div>
+    </section>
+
+    <!-- Кнопка возврата -->
+    <div class="text-center mt-5">
+        <a href="javascript:history.back()" class="btn btn-primary btn-lg px-4">Назад к меню</a>
     </div>
 </div>
 {% endblock %}

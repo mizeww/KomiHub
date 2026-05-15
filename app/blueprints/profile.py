@@ -73,16 +73,22 @@ def upload_avatar():
     return jsonify({'success': False, 'error': 'Неподдерживаемый формат файла'}), 400
 
 
+import datetime
+from flask import make_response, request, render_template
+from flask_login import login_required, current_user
+from app.models import db_session
+from app.models.users import User
+from app.models.card_views import CardView
+from sqlalchemy import func
+
+
 @profile_bp.route("/user")
 @login_required
 def user():
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == current_user.id).first()
-
     # 1. Расчет статистики дней подряд через Cookies
     today = datetime.date.today()
-    last_visit_str = request.cookies.get(f"last_visit_{user.id}")
-    streak = int(request.cookies.get(f"streak_{user.id}", 0))
+    last_visit_str = request.cookies.get(f"last_visit_{current_user.id}")
+    streak = int(request.cookies.get(f"streak_{current_user.id}", 0))
 
     if last_visit_str:
         try:
@@ -96,66 +102,75 @@ def user():
     else:
         streak = 1
 
-    # 2. Подсчет общего количества просмотров
-    cards_count = db_sess.query(CardView).filter(CardView.user_id == current_user.id).count()
+    # Использование контекстного менеджера гарантирует автоматическое закрытие сессии SQLite
+    with db_session.create_session() as db_sess:
+        try:
+            # 2. Подсчет общего количества просмотров карточек
+            cards_count = db_sess.query(CardView).filter(CardView.user_id == current_user.id).count()
 
-    # 3. НАТИВНЫЙ КАЛЕНДАРЬ АКТИВНОСТИ (Генерация матрицы на Python)
-    # Получаем словарь {дата_строкой: количество_просмотров}
-    view_data = db_sess.query(
-        func.date(CardView.viewed_at).label('date'),
-        func.count(CardView.id).label('count')
-    ).filter(CardView.user_id == current_user.id).group_by(func.date(CardView.viewed_at)).all()
+            # 3. Сбор статистики для календаря активности (Генерация матрицы)
+            view_data = db_sess.query(
+                func.date(CardView.viewed_at).label('date'),
+                func.count(CardView.id).label('count')
+            ).filter(CardView.user_id == current_user.id).group_by(func.date(CardView.viewed_at)).all()
 
-    activity_dict = {row.date: row.count for row in view_data}
+            activity_dict = {row.date: row.count for row in view_data}
 
-    # Генерируем дни за последние 24 недели (примерно 6 месяцев), начиная с понедельника
-    end_date = today
-    start_date = end_date - datetime.timedelta(weeks=24)
-    # Сдвигаем на ближайший прошлый понедельник для ровной сетки
-    start_date -= datetime.timedelta(days=start_date.weekday())
+            # Формируем сетку за последние 24 недели
+            end_date = today
+            start_date = end_date - datetime.timedelta(weeks=24)
+            start_date -= datetime.timedelta(days=start_date.weekday())  # Выравниваем на понедельник
 
-    # Строим матрицу: 7 строк (дни недели), N столбцов (недели)
-    weeks_grid = [[] for _ in range(7)]
+            weeks_grid = [[] for _ in range(7)]  # Матрица: 7 дней недели
 
-    current_day = start_date
-    while current_day <= end_date:
-        date_str = current_day.strftime("%Y-%m-%d")
-        count = activity_dict.get(date_str, 0)
+            current_day = start_date
+            while current_day <= end_date:
+                date_str = current_day.strftime("%Y-%m-%d")
+                count = activity_dict.get(date_str, 0)
 
-        # Определяем CSS-цвет в стиле GitHub
-        if count == 0:
-            color = "#eeeeee"
-        elif count <= 2:
-            color = "#9be9a8"
-        elif count <= 5:
-            color = "#40c463"
-        elif count <= 10:
-            color = "#30a14e"
-        else:
-            color = "#216e39"
+                # Присваиваем CSS-класс интенсивности
+                if count == 0:
+                    color_class = "contrib-color-0"
+                elif count <= 2:
+                    color_class = "contrib-color-1"
+                elif count <= 5:
+                    color_class = "contrib-color-2"
+                elif count <= 10:
+                    color_class = "contrib-color-3"
+                else:
+                    color_class = "contrib-color-4"
 
-        day_data = {
-            'date': current_day.strftime("%d.%m.%Y"),
-            'count': count,
-            'color': color
-        }
+                day_data = {
+                    'date': current_day.strftime("%d.%m.%Y"),
+                    'count': count,
+                    'class': color_class
+                }
 
-        weeks_grid[current_day.weekday()].append(day_data)
-        current_day += datetime.timedelta(days=1)
+                weeks_grid[current_day.weekday()].append(day_data)
+                current_day += datetime.timedelta(days=1)
 
-    db_sess.close()
+            # Извлекаем имя и email пользователя до закрытия сессии
+            user_obj = db_sess.query(User).filter(User.id == current_user.id).first()
+            user_name = user_obj.name
+            user_email = user_obj.email
 
+        except Exception as e:
+            db_sess.rollback()
+            raise e
+
+    # Формируем HTTP-ответ
     response = make_response(render_template(
         "user.html",
-        name=user.name,
-        email=user.email,
+        name=user_name,
+        email=user_email,
         streak_days=streak,
         cards_viewed=cards_count,
-        weeks_grid=weeks_grid
+        weeks_grid=weeks_grid  # Передаем исправленную сетку в шаблон
     ))
 
+    # Сохраняем куки активности на 1 год
     max_age = 60 * 60 * 24 * 365
-    response.set_cookie(f"last_visit_{user.id}", str(today), max_age=max_age)
-    response.set_cookie(f"streak_{user.id}", str(streak), max_age=max_age)
+    response.set_cookie(f"last_visit_{current_user.id}", str(today), max_age=max_age)
+    response.set_cookie(f"streak_{current_user.id}", str(streak), max_age=max_age)
 
     return response
