@@ -1,0 +1,100 @@
+.about-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
+
+    display: flex;
+    flex-direction: column; /* Элементы встанут в колонку (друг под другом) */
+    align-items: center;    /* Центрирует элементы по горизонтали внутри колонки */
+    gap: 20px;              /* Создает красивый отступ между заголовком и текстом */
+    text-align: center;     /* Центрирует текст внутри самих блоков */
+}
+
+.about-title {
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+}
+
+.about-content {
+    font-size: 20px;
+    line-height: 1.6;
+    max-width: 800px; /* Чтобы длинный текст не растягивался слишком сильно */
+}
+
+
+body { background-color: #121212; font-family: sans-serif; } /* Темный фон для контраста */
+
+.cards-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    position: relative;
+    padding: 25px;
+    gap: 20px;
+}
+
+.card {
+  background-color: #1e1e1e; /* Темно-серый фон карточки */
+  border: 1px solid #333;    /* Тонкая рамка */
+  border-radius: 16px;       /* Закругленные углы */
+  padding: 20px;
+  width: 350px;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Расстояние между фото и текстом */
+  margin-bottom: 15px;
+}
+
+.avatar {
+  max-width: 80px;         /* Строгий размер ширины */
+  max-height: 80px;        /* Строгий размер высоты */
+  border-radius: 50%;  /* Идеальный круг */
+  object-fit: cover;   /* Картинка заполняет круг, не искажаясь */
+  flex-shrink: 0;      /* Запрещаем контейнеру сжимать картинку */
+}
+
+.name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.role {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #4a90e2; /* Синий цвет для должности */
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-around; /* Равномерное распределение ссылок */
+  border-top: 1px solid #333;
+  padding-top: 15px;
+}
+
+.link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: opacity 0.3s;
+}
+
+.link:hover {
+  opacity: 0.7;
+}

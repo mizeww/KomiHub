@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<main class="content">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/developers_style.css') }}">
+
+    <div class="about-container">
+        <div class="about-title">
+            Разработчики<br>
+        </div>
+
+        <div class="about-content">
+            Это наша дрим-тим!
+        </div>
+    </div>
+
+    <div class="cards-container">
+    <div class="card">
+      <div class="card-header">
+        <img src="{{ url_for('static', filename='img/avatars/KOMLEV.jpg') }}" alt="Avatar" class="avatar">
+        <div class="user-info">
+          <h2 class="name">Фёдор Комлев</h2>
+          <p class="role">Frontend/Backend</p>
+        </div>
+      </div>
+      <p class="description">
+        Ученик Технологического лицея
+      </p>
+      <div class="card-footer">
+        <a href="https://github.com/molodoyadept666" class="link">GitHub</a>
+        <a href="https://t.me/molodoyadept666" class="link">Telegram</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <img src="{{ url_for('static', filename='img/avatars/ZHENYA.jpg') }}" alt="Avatar" class="avatar">
+        <div class="user-info">
+          <h2 class="name">Женя Мизев</h2>
+          <p class="role">Frontend/Backend</p>
+        </div>
+      </div>
+      <p class="description">
+        Ученик ФизМат лицея
+      </p>
+      <div class="card-footer">
+        <a href="https://github.com/mizeww" class="link">GitHub</a>
+        <a href="https://t.me/quenquee" class="link">Telegram</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <img src="{{ url_for('static', filename='img/avatars/KOSTYA.jpg') }}" alt="Avatar" class="avatar">
+        <div class="user-info">
+          <h2 class="name">Костя Чуркин</h2>
+          <p class="role">Дизайн</p>
+        </div>
+      </div>
+      <p class="description">
+        Дизайнер из академии TOP, студент 2 курса
+      </p>
+      <div class="card-footer">
+        <a href="https://t.me/kishka_free" class="link">Telegram</a>
+        <a href="https://vk.com/konstantinvodovorot" class="link">VK</a>
+      </div>
+    </div>
+    </div>
+
+</main>
+{% endblock %}

@@ -31,6 +31,8 @@ def create_app(config_class=DevelopmentConfig):
     from app.blueprints.cards import cards_bp
     from app.blueprints.cookie import cookie_bp
     from app.blueprints.translate import translate_bp
+    from app.blueprints.developers import developers_bp
+    from app.blueprints.about import about_bp
     from app.blueprints.trainers import trainers_bp
     # from app.blueprints.lessons import lessons_bp
 
@@ -40,6 +42,8 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(cards_bp, url_prefix='/cards')
     app.register_blueprint(cookie_bp, url_prefix='/cookies')
     app.register_blueprint(translate_bp)
+    app.register_blueprint(developers_bp, url_prefix='/developers')
+    app.register_blueprint(about_bp, url_prefix='/about')
     app.register_blueprint(trainers_bp, url_prefix='/trainers')
     # app.register_blueprint(lessons_bp, url_prefix='/lessons')
 

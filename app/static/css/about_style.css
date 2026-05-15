@@ -1,0 +1,19 @@
+.culture-header {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ img_nature }}') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 100px 0;
+    margin-bottom: 50px;
+}
+.culture-card img {
+    transition: transform 0.3s ease;
+    height: 250px;
+    object-fit: cover;
+}
+.culture-card img:hover {
+    transform: scale(1.03);
+}
+.text-secondary {
+    text-align: justify;
+    hyphens: auto;
+}
