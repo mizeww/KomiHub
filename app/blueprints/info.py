@@ -12,7 +12,7 @@ def about_language():
 
 @info_bp.route('/developers')
 def developers():
-    return render_template('info/developers.html', title='Разработчики')
+    return render_template('developers.html', title='Разработчики')
 
 @info_bp.route('/usefulinfo')
 def useful_links():

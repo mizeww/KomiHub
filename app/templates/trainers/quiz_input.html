@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content1 %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quiz_style.css') }}">
+<div class="quiz-card">
+    <div class="progress-info">
+        <span>Вопрос {{ step + 1 if stats else 1 }} из 20</span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" style="width: {{ (step / 20) * 100 if stats else 0 }}%"></div>
+    </div>
+
+    <div class="quiz-content">
+        <div class="word-kom">{{ card.word_kom }}</div>
+        <div class="word-rus-label">Введите перевод этого слова:</div>
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+            {{ form.answer(class="form-control form-control-lg text-center py-3 fs-4", autocomplete="off", placeholder="Ваш ответ...") }}
+        </div>
+        <button type="submit" class="btn-next">Ответить</button>
+    </form>
+</div>
+{% endblock %}

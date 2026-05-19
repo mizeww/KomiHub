@@ -4,7 +4,7 @@
     {% for card in word_cards %}
     <a href="/cards/view/{{ folder }}/{{ card.id }}" class="card-link text-decoration-none text-dark">
         <div class="card">
-            <img src="{{ url_for('static', filename='img/cards/' ~ folder ~ '/' ~ card.id ~ '.jpg') }}" alt="{{ card.id }}" loading="lazy">
+            <img src="{{ card.image }}" alt="{{ card.id }}" loading="lazy">
             <div class="card-content">
                 <h3>{{ card.word_kom }}</h3>
                 <p>{{ card.word_rus }}</p>

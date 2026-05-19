@@ -17,3 +17,4 @@ class Word(SqlAlchemyBase):
     suffix = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     translate = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     example = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    image_url = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')

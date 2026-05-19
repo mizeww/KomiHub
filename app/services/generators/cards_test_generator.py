@@ -18,6 +18,7 @@ def generate_card_test(n: int, db_sess: Session):
                     word_rus=parse.value,
                     suffix=parse.suffix,
                     examples=parse.example,
-                    id=word_id)
+                    id=word_id,
+                    image=parse.image_url)
 
         yield card

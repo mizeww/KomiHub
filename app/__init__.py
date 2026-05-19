@@ -4,6 +4,7 @@ from flask import Flask
 from app.config import DevelopmentConfig
 from app.extensions import db, login_manager, csrf
 from .models import db_session
+from os import *
 from .models.users import User
 
 
@@ -16,8 +17,15 @@ def create_app(config_class=DevelopmentConfig):
     login_manager.init_app(app)
     csrf.init_app(app)
 
-    db_session.global_init('instance/blogs.db')
-    db_sess = db_session.create_session()
+    root_dir = path.abspath(path.join(path.dirname(__file__), '..'))
+    instance_dir = path.join(root_dir, 'instance')
+    db_path = path.join(instance_dir, 'blogs.db')
+
+    # Гарантируем, что папка instance физически существует в корне проекта
+    makedirs(instance_dir, exist_ok=True)
+
+    # Инициализируем сессию по абсолютному пути
+    db_session.global_init(db_path)
 
     @login_manager.user_loader
     def load_user(user_id):
